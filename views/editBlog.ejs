@@ -10,18 +10,14 @@
     <%- include('./partials/nav') %>
 
         <div class="container my-4">
-            <form action="/blog" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label class="form-label" for="coverImage">Cover Image*</label>
-                    <input type="file" class="form-control" id="coverImage" name="coverImage">
-                </div>
+            <form action="/blog/edit/<%= blog._id %>" method="post">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title*</label>
-                    <input type="text" class="form-control" id="title" name="title">
+                    <input type="text" class="form-control" id="title" name="title" value="<%= blog.title %>">
                 </div>
                 <div class="mb-3">
                     <label for="body" class="form-label">Content*</label>
-                    <textarea class="form-control" name="body" id="body" cols="30" rows="9"></textarea>
+                    <textarea class="form-control" name="body" id="body" cols="30" rows="9"><%= blog.body %></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>

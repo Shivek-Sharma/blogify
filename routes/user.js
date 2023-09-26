@@ -1,7 +1,21 @@
 const Router = require('express');
 const User = require('../models/user');
+const multer = require('multer');
+const path = require('path');
 
 const router = Router();
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.resolve(`./public/images`));
+    },
+    filename: function (req, file, cb) {
+        const fileName = `${Date.now()}-${file.originalname}`;
+        cb(null, fileName);
+    }
+});
+
+const upload = multer({ storage: storage })
 
 router.get("/signin", (req, res) => {
     return res.render("signin");
@@ -11,17 +25,22 @@ router.get("/signup", (req, res) => {
     return res.render("signup");
 });
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", upload.single("profileImage"), async (req, res) => {
     const { fullName, email, password } = req.body;
 
-    // https://mongoosejs.com/docs/api/model.html#Model.create()
-    await User.create({
-        fullName,
-        email,
-        password
-    });
+    try {
+        // https://mongoosejs.com/docs/api/model.html#Model.create()
+        await User.create({
+            fullName,
+            email,
+            password,
+            profileImageURL: `/images/${req.file.filename}`
+        });
 
-    return res.redirect("/");
+        return res.redirect("/user/signin");
+    } catch (error) {
+        return res.render("signup", { error: "All fields are mandatory (except profile image)" });
+    }
 });
 
 router.post("/signin", async (req, res) => {

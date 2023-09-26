@@ -23,6 +23,23 @@ router.get("/add-new", (req, res) => {
     return res.render("addBlog", { user: req.user });
 });
 
+router.post("/", upload.single("coverImage"), async (req, res) => {
+    const { title, body } = req.body;
+
+    try {
+        const blog = await Blog.create({
+            title,
+            body,
+            createdBy: req.user._id,
+            coverImageURL: `/uploads/${req.file.filename}`
+        });
+
+        return res.redirect(`/blog/${blog._id}`);
+    } catch (error) {
+        return res.render("addBlog", { user: req.user, error: "All fields are mandatory" });
+    }
+});
+
 router.get("/:id", async (req, res) => {
     // https://mongoosejs.com/docs/api/query.html#Query.prototype.populate()
     const blog = await Blog.findById(req.params.id).populate("createdBy");
@@ -32,15 +49,25 @@ router.get("/:id", async (req, res) => {
     return res.render("blog", { user: req.user, blog, comments });
 });
 
-router.post("/", upload.single("coverImage"), async (req, res) => {
-    const { title, body } = req.body;
+router.get("/edit/:id", async (req, res) => {
+    const blog = await Blog.findById(req.params.id);
 
-    const blog = await Blog.create({
-        title,
-        body,
-        createdBy: req.user._id,
-        coverImageURL: `/uploads/${req.file.filename}`
-    });
+    return res.render("editBlog", { user: req.user, blog });
+});
+
+router.get("/delete/:id", async (req, res) => {
+    await Blog.findByIdAndDelete(req.params.id);
+
+    return res.redirect("/");
+});
+
+router.post("/edit/:id", async (req, res) => {
+    const blog = await Blog.findById(req.params.id);
+
+    blog.title = req.body.title || blog.title;
+    blog.body = req.body.body || blog.body;
+
+    await blog.save();
 
     return res.redirect(`/blog/${blog._id}`);
 });
