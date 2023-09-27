@@ -30,12 +30,17 @@ router.post("/signup", upload.single("profileImage"), async (req, res) => {
 
     try {
         // https://mongoosejs.com/docs/api/model.html#Model.create()
-        await User.create({
+        const newUser = new User({
             fullName,
             email,
-            password,
-            profileImageURL: `/images/${req.file.filename}`
+            password
         });
+
+        if (req.file) {
+            newUser.profileImageURL = `/images/${req.file.filename}`;
+        }
+
+        await newUser.save();
 
         return res.redirect("/user/signin");
     } catch (error) {
