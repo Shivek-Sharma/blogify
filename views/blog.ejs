@@ -11,7 +11,7 @@
 <body>
     <%- include('./partials/nav') %>
 
-        <div class="container my-4 mx-auto w-auto">
+        <div class="container my-4 mx-auto w-75">
             <div class="container">
                 <p class="h1 mb-4">
                     <%= blog.title %>
@@ -33,14 +33,19 @@
                         </div>
                         <% } %>
                             <% } %>
+
                                 <div>
                                     <img src="<%= blog.coverImageURL %>" alt="Cover Image"
                                         class="img-fluid mb-4 pt-5 border-top" width="700px">
-                                    <pre class="mt-4"><%= blog.body %></pre>
+                                    <p class="mt-4">
+                                        <%- blog.body.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'
+                                            ).replace(/\r\n/g, '<br>' ) %>
+                                    </p>
+
                                 </div>
             </div>
 
-            <div class="container mt-4">
+            <div class="container mt-4 border-top pt-4">
                 <p class="h4">Comments (<%= comments.length %>)</p>
 
                 <% if (locals.user) { %>

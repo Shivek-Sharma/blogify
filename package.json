@@ -1,14 +1,14 @@
 {
-  "name": "nodejs-blog-app",
+  "name": "blogify",
   "version": "1.0.0",
-  "description": "",
+  "description": "A NodeJs Blog Application",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "shivek-sharma",
   "license": "ISC",
   "dependencies": {
     "cookie-parser": "^1.4.6",
